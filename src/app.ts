@@ -1,3 +1,4 @@
+
 import express from 'express';
 
 export const app = express();
@@ -9,35 +10,75 @@ app.get('/health', function (_, res) {
   res.sendStatus(200);
 });
 
-// TODO: Implement the add endpoint
-// - Accept two query parameters: `a` and `b`
-// - Return JSON: { result: <sum of a and b> }
-// - If either `a` or `b` is missing or not a valid number, return 400: { error: 'Invalid operands' }
+// Helper function to validate query parameters
+function getOperands(a: unknown, b: unknown) {
+  if (typeof a !== 'string' || typeof b !== 'string') {
+    return null;
+  }
+
+  if (a.trim() === '' || b.trim() === '') {
+    return null;
+  }
+
+  const numA = Number(a);
+  const numB = Number(b);
+
+  if (!Number.isFinite(numA) || !Number.isFinite(numB)) {
+    return null;
+  }
+
+  return { numA, numB };
+}
+
+// Add endpoint
 app.get('/api/v1/add', function (req, res) {
-  res.status(501).json({ error: 'Not implemented' });
+  const operands = getOperands(req.query.a, req.query.b);
+
+  if (!operands) {
+    return res.status(400).json({ error: 'Invalid operands' });
+  }
+
+  const { numA, numB } = operands;
+  return res.status(200).json({ result: numA + numB });
 });
 
-// TODO: Implement the subtract endpoint
-// - Accept two query parameters: `a` and `b`
-// - Return JSON: { result: <a minus b> }
-// - If either `a` or `b` is missing or not a valid number, return 400: { error: 'Invalid operands' }
+// Subtract endpoint
 app.get('/api/v1/subtract', function (req, res) {
-  res.status(501).json({ error: 'Not implemented' });
+  const operands = getOperands(req.query.a, req.query.b);
+
+  if (!operands) {
+    return res.status(400).json({ error: 'Invalid operands' });
+  }
+
+  const { numA, numB } = operands;
+  return res.status(200).json({ result: numA - numB });
 });
 
-// TODO: Implement the multiply endpoint
-// - Accept two query parameters: `a` and `b`
-// - Return JSON: { result: <product of a and b> }
-// - If either `a` or `b` is missing or not a valid number, return 400: { error: 'Invalid operands' }
+// Multiply endpoint
 app.get('/api/v1/multiply', function (req, res) {
-  res.status(501).json({ error: 'Not implemented' });
+  const operands = getOperands(req.query.a, req.query.b);
+
+  if (!operands) {
+    return res.status(400).json({ error: 'Invalid operands' });
+  }
+
+  const { numA, numB } = operands;
+  return res.status(200).json({ result: numA * numB });
 });
 
-// TODO: Implement the divide endpoint
-// - Accept two query parameters: `a` and `b`
-// - Return JSON: { result: <a divided by b> }
-// - If either `a` or `b` is missing or not a valid number, return 400: { error: 'Invalid operands' }
-// - If `b` is 0, return 400: { error: 'Division by zero' }
+// Divide endpoint
 app.get('/api/v1/divide', function (req, res) {
-  res.status(501).json({ error: 'Not implemented' });
+  const operands = getOperands(req.query.a, req.query.b);
+
+  if (!operands) {
+    return res.status(400).json({ error: 'Invalid operands' });
+  }
+
+  const { numA, numB } = operands;
+
+  if (numB === 0) {
+    return res.status(400).json({ error: 'Division by zero' });
+  }
+
+  return res.status(200).json({ result: numA / numB });
 });
